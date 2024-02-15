@@ -1,27 +1,54 @@
-import { auth, signOut } from "@/auth";
+"use client";
+
 import { Button } from "@/components/ui/button";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { signOut } from "next-auth/react";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
-const SettingsPage = async () => {
-    const session = await auth();
+const SettingsPage = () => {
+    const user = useCurrentUser();
 
-    return ( 
-        <div className=" bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-gray-950 to-black h-full text-white">
-            {JSON.stringify(session)}
-            <form action={async() => {
-                "use server";
+    const onClick = () => {
+        signOut();
+    };
 
-                await signOut();
-            }}>
-                <Button
-                    variant={"default"}
-                    type="submit"
-                    className=" bg-gradient-to-tr from-black via-blue-700/10 to-black hover:opacity-80 transition"
-                >
-                    Sign out
-                </Button>
-            </form>
+    return (
+        <div className="w-full h-full text-white p-10 flex justify-center items-center">
+            <AlertDialog>
+                <AlertDialogTrigger>
+                    <Button
+                        variant={"default"}
+                        type="submit"
+                        className="relative bg-gradient-to-r from-blue-700/10 via-black to-black hover:opacity-80 transition border border-blue-500 text-white px-4 py-2 rounded-md"
+                    >
+                        Sign out
+                    </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent className="bg-gradient-to-r from-gray-950 via-black to-black text-white">
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This action cannot be undone. you are sign-out after this move!
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel className="text-black">Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={onClick}>Continue</AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
-     );
+    );
 }
- 
+
 export default SettingsPage;
